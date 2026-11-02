@@ -100,6 +100,8 @@ jobs:
                       assert content['channel'] == ('beta' if prefix else 'stable')
                       assert content['page'] == 'home'
                       assert content['boards'] and any(content['support'].values())
+                      assert content['pool_names']['public-pool.io'] == 'Public Pool'
+                      assert content['pool_links']['public-pool.io'] == 'https://web.public-pool.io/'
                       main = re.search(r'<main[^>]*>(.*?)</main>', page, re.S)[1]
                       for component in ('board-comparison', 'discovery-demo', 'discovery-help', 'discovery-support'):
                           assert f'id="{component}"' not in main
@@ -113,6 +115,10 @@ jobs:
                           assert data['version'] == content['version']
                           assert '__PAGE_' not in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
+                          if key == 'stats':
+                              assert 'id="st-pools"' in document and 'data-t="poolsHelp"' in document
+                              assert 'poolUnknown' in document and 'poolOther' in document
+                              assert 'pool-site' in document and 'noopener noreferrer' in document
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')
@@ -123,7 +129,7 @@ jobs:
                       assert manifest['version'] == content['version']
                   assert 'NovaFlow' in read('bdlxs/')
                   assert 'BDLXS' in read('bdlxs/')
-                  print('PASS: all 20 separate pages, Flash action, shared content, isolated demos, USB manifests and original BDLXS page')
+                  print('PASS: all 20 separate pages, Flash action, pool statistics, isolated demos, USB manifests and original BDLXS page')
                   break
               except Exception as error:
                   if attempt == 29:

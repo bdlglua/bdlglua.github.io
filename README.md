@@ -28,6 +28,13 @@ The same pages are available under `/beta/`. Previous home-page fragment links
 continue to open the appropriate page. Selecting a board in the comparison
 passes its profile to the USB flasher.
 
+The statistics page also groups miner counts and combined hashrate by public
+pool. From firmware 2.0.3, **Share my pool anonymously** is enabled by default
+and can be disabled in Network settings; saved opt-outs are kept. Public pools
+link to their official website, with the URL shown below the name. Private/custom endpoints are grouped
+as **Other / private pool** before leaving the device. Older reports, disabled
+pool sharing and disconnected pools appear as **Not shared**.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`
@@ -42,7 +49,7 @@ generated firmware binaries are not committed to this repository.
 
 It waits for an existing branch-based Pages build to finish before deploying
 the generated site, then checks all ten pages in both channels, discovery data,
-demo files, installer manifests and the preserved BDLXS page.
+demo files, pool statistics markup, installer manifests and the preserved BDLXS page.
 
 The existing project website at `/BDLMinerV2/` remains published separately.
 Existing firmware update links continue to use it.
