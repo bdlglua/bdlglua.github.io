@@ -53,10 +53,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - name: Use the Actions publishing source for the existing Pages site
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
       - uses: actions/deploy-pages@v5
         id: deploy
       - name: Verify the published root, beta and BDLXS pages
