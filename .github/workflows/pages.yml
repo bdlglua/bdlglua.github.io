@@ -1,0 +1,92 @@
+name: Publish BDLMiner
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/pages.yml", "bdlxs/**"]
+  workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: website
+      - uses: actions/checkout@v7
+        with:
+          repository: bdlglua/BDLMinerV2
+          ref: main
+          path: source
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build the stable and beta USB installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 source/tools/make_channels.py --repository bdlglua/BDLMinerV2 --output site
+      - name: Preserve the BDLXS website
+        run: |
+          cp -R website/bdlxs site/bdlxs
+          touch site/.nojekyll
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Use the Actions publishing source for the existing Pages site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
+      - uses: actions/deploy-pages@v5
+        id: deploy
+      - name: Verify the published root, beta and BDLXS pages
+        env:
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time
+          from urllib.request import Request, urlopen
+          base = os.environ['PAGE_URL'].rstrip('/') + '/'
+          def read(path):
+              request = Request(base + path, headers={'Cache-Control': 'no-cache'})
+              with urlopen(request, timeout=30) as response:
+                  assert response.url.startswith(base)
+                  return response.read().decode()
+          for attempt in range(30):
+              try:
+                  for prefix in ('', 'beta/'):
+                      page = read(prefix)
+                      assert '<title>BDLMiner V2:' in page
+                      assert 'http-equiv="refresh"' not in page
+                      manifest = json.loads(read(prefix + 'manifest-m5stickc-plus2.json'))
+                      assert manifest['name'].startswith('BDLMiner V2')
+                  assert 'NovaFlow' in read('bdlxs/')
+                  assert 'BDLXS' in read('bdlxs/')
+                  print('PASS: full BDLMiner site at root and beta, USB manifests, original BDLXS page')
+                  break
+              except Exception as error:
+                  if attempt == 29:
+                      raise
+                  print('Waiting for Pages propagation:', type(error).__name__, flush=True)
+                  time.sleep(5)
+          PY
