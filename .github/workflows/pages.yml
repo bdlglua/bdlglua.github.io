@@ -3,7 +3,6 @@ name: Publish BDLMiner
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/pages.yml", "bdlxs/**"]
   workflow_dispatch:
   schedule:
     - cron: "23 * * * *"
@@ -47,12 +46,31 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      - name: Wait for any branch-based Pages build before publishing
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess, time
+          endpoint = f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs?head_sha={os.environ['GITHUB_SHA']}"
+          for attempt in range(60):
+              runs = json.loads(subprocess.check_output(['gh', 'api', endpoint]))['workflow_runs']
+              active = [run for run in runs if run['name'] == 'pages build and deployment' and run['status'] != 'completed']
+              if not active:
+                  break
+              print('Waiting for the existing branch-based Pages workflow...', flush=True)
+              time.sleep(5)
+          else:
+              raise TimeoutError('The branch-based Pages workflow has not finished')
+          PY
       - uses: actions/deploy-pages@v5
         id: deploy
       - name: Verify the published root, beta and BDLXS pages
