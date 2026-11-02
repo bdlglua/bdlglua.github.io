@@ -73,7 +73,7 @@ jobs:
           PY
       - uses: actions/deploy-pages@v5
         id: deploy
-      - name: Verify the published root, beta and BDLXS pages
+      - name: Verify the separate pages, both channels and BDLXS
         env:
           PAGE_URL: ${{ steps.deploy.outputs.page_url }}
         run: |
@@ -81,6 +81,10 @@ jobs:
           import json, os, re, time
           from urllib.request import Request, urlopen
           base = os.environ['PAGE_URL'].rstrip('/') + '/'
+          pages = {'home': 'index.html', 'start': 'start.html', 'boards': 'boards.html',
+                   'flash': 'flash.html', 'demo': 'demo.html', 'faq': 'faq.html',
+                   'releases': 'releases.html', 'stats': 'stats.html',
+                   'gallery': 'gallery.html', 'support': 'support.html'}
           def read(path):
               request = Request(base + path, headers={'Cache-Control': 'no-cache'})
               with urlopen(request, timeout=30) as response:
@@ -94,7 +98,21 @@ jobs:
                       assert 'http-equiv="refresh"' not in page
                       content = json.loads(re.search(r'<script id="site-data" type="application/json">(.*?)</script>', page, re.S)[1])
                       assert content['channel'] == ('beta' if prefix else 'stable')
+                      assert content['page'] == 'home'
                       assert content['boards'] and any(content['support'].values())
+                      main = re.search(r'<main[^>]*>(.*?)</main>', page, re.S)[1]
+                      for component in ('board-comparison', 'discovery-demo', 'discovery-help', 'discovery-support'):
+                          assert f'id="{component}"' not in main
+                      assert 'href="flash.html" data-t="ctaInstall">Flash</a>' in page
+                      assert 'Install in 2 minutes' not in page and 'Installer en 2 minutes' not in page
+                      for key, path in pages.items():
+                          document = page if key == 'home' else read(prefix + path)
+                          assert f'data-page="{key}"' in document
+                          data = json.loads(re.search(r'<script id="site-data" type="application/json">(.*?)</script>', document, re.S)[1])
+                          assert data['page'] == key and data['channel'] == content['channel']
+                          assert data['version'] == content['version']
+                          assert '__PAGE_' not in document
+                          assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')
@@ -105,7 +123,7 @@ jobs:
                       assert manifest['version'] == content['version']
                   assert 'NovaFlow' in read('bdlxs/')
                   assert 'BDLXS' in read('bdlxs/')
-                  print('PASS: root and beta installers, discovery content, support, isolated demos, USB manifests and original BDLXS page')
+                  print('PASS: all 20 separate pages, Flash action, shared content, isolated demos, USB manifests and original BDLXS page')
                   break
               except Exception as error:
                   if attempt == 29:

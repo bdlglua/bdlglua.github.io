@@ -11,6 +11,23 @@ link. Public content and reviewed photos are maintained in
 [`installer/content.json`](https://github.com/bdlglua/BDLMinerV2/blob/main/installer/content.json);
 see the [website maintenance guide](https://github.com/bdlglua/BDLMinerV2/blob/main/installer/README.md).
 
+The home page is a short overview. Each section has its own page with shared
+navigation, in both English and French:
+
+- [Flash / Flasher](https://bdlglua.github.io/flash.html)
+- [Get started](https://bdlglua.github.io/start.html)
+- [Supported boards](https://bdlglua.github.io/boards.html)
+- [Interactive demos](https://bdlglua.github.io/demo.html)
+- [Troubleshooting](https://bdlglua.github.io/faq.html)
+- [Releases](https://bdlglua.github.io/releases.html)
+- [Live statistics](https://bdlglua.github.io/stats.html)
+- [Community](https://bdlglua.github.io/gallery.html)
+- [Support BDLMiner](https://bdlglua.github.io/support.html)
+
+The same pages are available under `/beta/`. Previous home-page fragment links
+continue to open the appropriate page. Selecting a board in the comparison
+passes its profile to the USB flasher.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`
@@ -24,8 +41,8 @@ Actions tab. It publishes the generated files using GitHub Pages Actions;
 generated firmware binaries are not committed to this repository.
 
 It waits for an existing branch-based Pages build to finish before deploying
-the generated site, then checks the live installers, discovery data, demo files
-and the preserved BDLXS page.
+the generated site, then checks all ten pages in both channels, discovery data,
+demo files, installer manifests and the preserved BDLXS page.
 
 The existing project website at `/BDLMinerV2/` remains published separately.
 Existing firmware update links continue to use it.
