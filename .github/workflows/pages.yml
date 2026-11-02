@@ -78,7 +78,7 @@ jobs:
           PAGE_URL: ${{ steps.deploy.outputs.page_url }}
         run: |
           python3 - <<'PY'
-          import json, os, time
+          import json, os, re, time
           from urllib.request import Request, urlopen
           base = os.environ['PAGE_URL'].rstrip('/') + '/'
           def read(path):
@@ -92,11 +92,20 @@ jobs:
                       page = read(prefix)
                       assert '<title>BDLMiner V2:' in page
                       assert 'http-equiv="refresh"' not in page
+                      content = json.loads(re.search(r'<script id="site-data" type="application/json">(.*?)</script>', page, re.S)[1])
+                      assert content['channel'] == ('beta' if prefix else 'stable')
+                      assert content['boards'] and any(content['support'].values())
+                      assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
+                      for mode in ('miner', 'hub'):
+                          demo = read(prefix + 'demo/' + mode + '/index.html')
+                          assert 'Content-Security-Policy' in demo and 'connect-src' in demo
+                          assert 'BDL_DEMO' in demo
                       manifest = json.loads(read(prefix + 'manifest-m5stickc-plus2.json'))
                       assert manifest['name'].startswith('BDLMiner V2')
+                      assert manifest['version'] == content['version']
                   assert 'NovaFlow' in read('bdlxs/')
                   assert 'BDLXS' in read('bdlxs/')
-                  print('PASS: full BDLMiner site at root and beta, USB manifests, original BDLXS page')
+                  print('PASS: root and beta installers, discovery content, support, isolated demos, USB manifests and original BDLXS page')
                   break
               except Exception as error:
                   if attempt == 29:
