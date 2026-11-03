@@ -124,6 +124,8 @@ jobs:
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
                       agent_settings = read(prefix + 'demo/miner/settings.js')
                       assert 'user_agents' in agent_settings and 'CHOICES.ua=agents.map' in agent_settings
+                      assert 'Bitcoin SV (BSV)' in agent_settings and 'eCash (XEC)' in agent_settings
+                      assert 'DigiByte · SHA-256d (DGB)' in agent_settings
                       assert 'Manual user agent' not in agent_settings and "uaauto:[['true','Automatic']" not in agent_settings
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')

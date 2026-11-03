@@ -47,6 +47,12 @@ The native identity follows the installed firmware version, while a selected
 NerdMinerV2 identity is retained. The setup portal and interactive demo use the
 same choices.
 
+From 2.2.0, the SHA-256d selector adds **BSV**, **eCash (XEC)** and
+**DigiByte SHA-256d (DGB)** alongside BTC/BCH. The new profiles use Stratum V1,
+matching pool/address settings and separate public totals. DGB rejects jobs from
+its other mining algorithms. The FAQ and coin guide explain pool requirements;
+physical measurements on these new pools remain pending.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`
