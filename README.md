@@ -35,6 +35,12 @@ link to their official website, with the URL shown below the name. Private/custo
 as **Other / private pool** before leaving the device. Older reports, disabled
 pool sharing and disconnected pools appear as **Not shared**.
 
+From firmware 2.1.0, the miner can select BTC or BCH (SHA-256d). The
+[configuration guide](https://github.com/bdlglua/BDLMinerV2/blob/main/docs/mining-coins.md)
+explains matching pools, addresses/accounts and BCH Stratum V1. Live statistics
+show a separate cryptocurrency breakdown; old reports without a ticker count
+under BTC. The dashboard and hub demos use the same selection controls.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`

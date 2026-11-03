@@ -117,6 +117,7 @@ jobs:
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
                               assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
+                              assert 'id="st-coins"' in document and 'coin-breakdown' in document
                               assert 'data-t="poolsHelp"' not in document
                               assert 'poolUnknown' in document and 'poolOther' in document
                               assert 'pool-site' in document and 'noopener noreferrer' in document
