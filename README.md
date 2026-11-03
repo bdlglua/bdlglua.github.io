@@ -41,6 +41,12 @@ explains matching pools, addresses/accounts and BCH Stratum V1. Live statistics
 show a separate cryptocurrency breakdown; old reports without a ticker count
 under BTC. The dashboard and hub demos use the same selection controls.
 
+From 2.1.1, **User agent** is one dropdown: `NerdMinerV2` or
+`BDLMinerV2/2.1.1`. There are no Automatic/Manual modes or custom text entry.
+The native identity follows the installed firmware version, while a selected
+NerdMinerV2 identity is retained. The setup portal and interactive demo use the
+same choices.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`

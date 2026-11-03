@@ -122,6 +122,9 @@ jobs:
                               assert 'poolUnknown' in document and 'poolOther' in document
                               assert 'pool-site' in document and 'noopener noreferrer' in document
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
+                      agent_settings = read(prefix + 'demo/miner/settings.js')
+                      assert 'user_agents' in agent_settings and 'CHOICES.ua=agents.map' in agent_settings
+                      assert 'Manual user agent' not in agent_settings and "uaauto:[['true','Automatic']" not in agent_settings
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')
                           assert 'Content-Security-Policy' in demo and 'connect-src' in demo
