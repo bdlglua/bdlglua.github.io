@@ -116,7 +116,8 @@ jobs:
                           assert '__PAGE_' not in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
-                              assert 'id="st-pools"' in document and 'data-t="poolsHelp"' in document
+                              assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
+                              assert 'data-t="poolsHelp"' not in document
                               assert 'poolUnknown' in document and 'poolOther' in document
                               assert 'pool-site' in document and 'noopener noreferrer' in document
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
