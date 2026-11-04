@@ -27,6 +27,14 @@ jobs:
           repository: bdlglua/BDLMinerV2
           ref: main
           path: source
+      - uses: actions/checkout@v7
+        with:
+          repository: bdlglua/BDLMiner-stats
+          ref: main
+          path: collector
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -34,6 +42,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 source/tools/make_channels.py --repository bdlglua/BDLMinerV2 --output site
+      - name: Build the standalone private viewer at /remote/
+        run: node collector/scripts/build-remote-site.js site/remote
       - name: Preserve the BDLXS website
         run: |
           cp -R website/bdlxs site/bdlxs
@@ -78,7 +88,9 @@ jobs:
           PAGE_URL: ${{ steps.deploy.outputs.page_url }}
         run: |
           python3 - <<'PY'
-          import json, os, re, time
+          import hashlib, json, os, re, time
+          from urllib.error import HTTPError
+          from urllib.parse import urlsplit
           from urllib.request import Request, urlopen
           base = os.environ['PAGE_URL'].rstrip('/') + '/'
           pages = {'home': 'index.html', 'start': 'start.html', 'boards': 'boards.html',
@@ -114,7 +126,7 @@ jobs:
                           assert data['page'] == key and data['channel'] == content['channel']
                           assert data['version'] == content['version']
                           assert '__PAGE_' not in document
-                          assert 'https://bdlminer-stats.bdlminer-bot.workers.dev/remote' in document
+                          assert 'https://bdlglua.github.io/remote/' in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
                               assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
@@ -139,6 +151,31 @@ jobs:
                       assert manifest['version'] == content['version']
                   assert 'NovaFlow' in read('bdlxs/')
                   assert 'BDLXS' in read('bdlxs/')
+                  remote = read('remote/')
+                  assert 'id="login-form"' in remote
+                  assert 'href="./remote.css"' in remote and 'src="./remote.js"' in remote
+                  api = 'https://bdlminer-stats.bdlminer-bot.workers.dev'
+                  assert 'name="bdl-remote-api" content="' + api + '"' in remote
+                  assert 'connect-src ' + api in remote and 'name="referrer" content="no-referrer"' in remote
+                  private_build = json.loads(read('remote/build.json'))
+                  assert private_build['api_origin'] == api
+                  assert re.fullmatch('[a-f0-9]{40}', private_build['source_commit'])
+                  for asset, digest in private_build['sha256'].items():
+                      assert asset in ('index.html', 'remote.js', 'remote.css')
+                      assert hashlib.sha256(read('remote/' + asset).encode()).hexdigest() == digest
+                  origin = urlsplit(base).scheme + '://' + urlsplit(base).netloc
+                  preflight = Request(api + '/api/remote', headers={'User-Agent':'BDLMiner-site-check/2.3.0',
+                      'Origin':origin, 'Access-Control-Request-Method':'GET',
+                      'Access-Control-Request-Headers':'authorization'}, method='OPTIONS')
+                  with urlopen(preflight, timeout=20) as response:
+                      assert response.status == 204 and response.headers['Access-Control-Allow-Origin'] == origin
+                  guarded = Request(api + '/api/remote', headers={'User-Agent':'BDLMiner-site-check/2.3.0','Origin':origin})
+                  try:
+                      urlopen(guarded, timeout=20)
+                      raise AssertionError('Private readings did not require a key')
+                  except HTTPError as error:
+                      assert error.code == 401 and error.headers['Access-Control-Allow-Origin'] == origin
+                  print('PASS: standalone /remote/ page, verified static assets, GitHub-origin preflight and private API key requirement')
                   print('PASS: all 20 separate pages, Flash action, pool statistics, isolated demos, USB manifests and original BDLXS page')
                   break
               except Exception as error:

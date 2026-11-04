@@ -53,10 +53,11 @@ matching pool/address settings and separate public totals. DGB rejects jobs from
 its other mining algorithms. The FAQ and coin guide explain pool requirements;
 physical measurements on these new pools remain pending.
 
-From 2.3.0, [My miners](https://bdlminer-stats.bdlminer-bot.workers.dev/remote)
+From 2.3.0, [My miners](https://bdlglua.github.io/remote/)
 provides opt-in private remote readings and seven-day history, without a local
-hub. Pair boards with a browser-generated access key; anonymous public totals
-remain separate. The private viewer uses its own isolated scripts and supports
+hub. The interface is hosted here at `/remote/`; authenticated data requests go
+to the existing statistics service. Pair boards with a browser-generated access
+key; anonymous public totals remain separate. The private viewer uses its own isolated scripts and supports
 permanent key revocation. See the [setup and privacy guide](https://github.com/bdlglua/BDLMinerV2/blob/main/docs/remote-access.md).
 
 ## Publishing
@@ -74,6 +75,9 @@ generated firmware binaries are not committed to this repository.
 It waits for an existing branch-based Pages build to finish before deploying
 the generated site, then checks all ten pages in both channels, discovery data,
 demo files, pool statistics markup, installer manifests and the preserved BDLXS page.
+It also builds the private viewer from `BDLMiner-stats`, checks its three asset
+digests and verifies that the API permits this GitHub origin while still requiring
+an access key. The remote viewer has its own scripts and no community widgets.
 
 The existing project website at `/BDLMinerV2/` remains published separately.
 Existing firmware update links continue to use it.
