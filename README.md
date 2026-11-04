@@ -53,6 +53,12 @@ matching pool/address settings and separate public totals. DGB rejects jobs from
 its other mining algorithms. The FAQ and coin guide explain pool requirements;
 physical measurements on these new pools remain pending.
 
+From 2.3.0, [My miners](https://bdlminer-stats.bdlminer-bot.workers.dev/remote)
+provides opt-in private remote readings and seven-day history, without a local
+hub. Pair boards with a browser-generated access key; anonymous public totals
+remain separate. The private viewer uses its own isolated scripts and supports
+permanent key revocation. See the [setup and privacy guide](https://github.com/bdlglua/BDLMinerV2/blob/main/docs/remote-access.md).
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`

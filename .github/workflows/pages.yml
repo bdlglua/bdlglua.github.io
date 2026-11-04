@@ -114,6 +114,7 @@ jobs:
                           assert data['page'] == key and data['channel'] == content['channel']
                           assert data['version'] == content['version']
                           assert '__PAGE_' not in document
+                          assert 'https://bdlminer-stats.bdlminer-bot.workers.dev/remote' in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
                               assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
@@ -126,6 +127,8 @@ jobs:
                       assert 'user_agents' in agent_settings and 'CHOICES.ua=agents.map' in agent_settings
                       assert 'Bitcoin SV (BSV)' in agent_settings and 'eCash (XEC)' in agent_settings
                       assert 'DigiByte · SHA-256d (DGB)' in agent_settings
+                      assert 'remotekey' in agent_settings and 'Private remote monitoring' in agent_settings
+                      assert 'https://bdlminer-stats.bdlminer-bot.workers.dev/remote' in agent_settings
                       assert 'Manual user agent' not in agent_settings and "uaauto:[['true','Automatic']" not in agent_settings
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')
