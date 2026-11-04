@@ -60,6 +60,12 @@ to the existing statistics service. Pair boards with a browser-generated access
 key; anonymous public totals remain separate. The private viewer uses its own isolated scripts and supports
 permanent key revocation. See the [setup and privacy guide](https://github.com/bdlglua/BDLMinerV2/blob/main/docs/remote-access.md).
 
+From 2.4.0, **Peercoin (PPC) proof of work** is a sixth coin profile, with
+Peercoin address checks, Stratum V1 setup guidance and separate public/private
+statistics. It does not provide staking. See the
+[Peercoin setup guide](https://github.com/bdlglua/BDLMinerV2/blob/main/docs/mining-coins.md#peercoin-proof-of-work);
+physical measurements on a PPC pool remain pending.
+
 ## Publishing
 
 The **Publish BDLMiner** workflow builds the website using the current `main`
