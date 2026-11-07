@@ -155,7 +155,7 @@ jobs:
                   assert 'BDLXS' in read('bdlxs/')
                   remote = read('remote/')
                   assert 'id="login-form"' in remote
-                  assert 'href="./remote.css"' in remote and 'src="./remote.js"' in remote
+                  assert re.search(r'href="\./remote\.css(\?v=[a-f0-9]+)?"', remote) and re.search(r'src="\./remote\.js(\?v=[a-f0-9]+)?"', remote)
                   api = 'https://bdlminer-stats.bdlminer-bot.workers.dev'
                   assert 'name="bdl-remote-api" content="' + api + '"' in remote
                   assert 'connect-src ' + api in remote and 'name="referrer" content="no-referrer"' in remote
