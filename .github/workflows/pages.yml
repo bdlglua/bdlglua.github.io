@@ -132,8 +132,10 @@ jobs:
                               assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
                               assert 'id="st-coins"' in document and 'coin-breakdown' in document
                               assert 'data-t="poolsHelp"' not in document
-                              assert 'poolUnknown' in document and 'poolOther' in document
-                              assert 'pool-site' in document and 'noopener noreferrer' in document
+                              # The pool table is filled by the shared site script.
+                              script = read(prefix + 'assets/site.js')
+                              assert 'poolUnknown' in script and 'poolOther' in script
+                              assert 'pool-site' in script and 'noopener noreferrer' in script
                       assert 'Support BDLMiner' in read(prefix + 'assets/discovery.js')
                       agent_settings = read(prefix + 'demo/miner/settings.js')
                       assert 'user_agents' in agent_settings and 'CHOICES.ua=agents.map' in agent_settings
@@ -153,7 +155,7 @@ jobs:
                   assert 'BDLXS' in read('bdlxs/')
                   remote = read('remote/')
                   assert 'id="login-form"' in remote
-                  assert 'href="./remote.css"' in remote and 'src="./remote.js"' in remote
+                  assert re.search(r'href="\./remote\.css(\?v=[a-f0-9]+)?"', remote) and re.search(r'src="\./remote\.js(\?v=[a-f0-9]+)?"', remote)
                   api = 'https://bdlminer-stats.bdlminer-bot.workers.dev'
                   assert 'name="bdl-remote-api" content="' + api + '"' in remote
                   assert 'connect-src ' + api in remote and 'name="referrer" content="no-referrer"' in remote
