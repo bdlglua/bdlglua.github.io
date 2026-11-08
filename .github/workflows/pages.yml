@@ -126,7 +126,7 @@ jobs:
                           assert data['page'] == key and data['channel'] == content['channel']
                           assert data['version'] == content['version']
                           assert '__PAGE_' not in document
-                          assert 'https://miner.bdl-pool.com/remote/' in document
+                          assert 'href="remote.html"' in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
                               assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
