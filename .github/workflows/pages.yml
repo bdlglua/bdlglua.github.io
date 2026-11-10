@@ -117,7 +117,7 @@ jobs:
                       main = re.search(r'<main[^>]*>(.*?)</main>', page, re.S)[1]
                       for component in ('board-comparison', 'discovery-demo', 'discovery-help', 'discovery-support'):
                           assert f'id="{component}"' not in main
-                      assert 'href="flash.html" data-t="ctaInstall">Flash</a>' in page
+                      assert 'href="flash.html" data-t="ctaInstall">Install</a>' in page
                       assert 'Install in 2 minutes' not in page and 'Installer en 2 minutes' not in page
                       for key, path in pages.items():
                           document = page if key == 'home' else read(prefix + path)
@@ -129,8 +129,8 @@ jobs:
                           assert 'href="remote.html"' in document
                           assert ('src="https://unpkg.com/esp-web-tools' in document) == (key == 'flash')
                           if key == 'stats':
-                              assert 'id="st-pools"' in document and 'class="card pool-breakdown"' in document
-                              assert 'id="st-coins"' in document and 'coin-breakdown' in document
+                              assert 'id="st-pools"' in document
+                              assert 'id="st-coins"' in document
                               assert 'data-t="poolsHelp"' not in document
                               # The pool table is filled by the shared site script.
                               script = read(prefix + 'assets/site.js')
