@@ -142,7 +142,7 @@ jobs:
                       assert 'Bitcoin SV (BSV)' in agent_settings and 'eCash (XEC)' in agent_settings
                       assert 'DigiByte · SHA-256d (DGB)' in agent_settings
                       assert 'remotekey' in agent_settings and 'Private remote monitoring' in agent_settings
-                      assert 'https://bdlminer-stats.bdlminer-bot.workers.dev/remote' in agent_settings
+                      assert 'https://miner.bdl-pool.com/remote.html' in agent_settings
                       assert 'Manual user agent' not in agent_settings and "uaauto:[['true','Automatic']" not in agent_settings
                       for mode in ('miner', 'hub'):
                           demo = read(prefix + 'demo/' + mode + '/index.html')
@@ -156,7 +156,7 @@ jobs:
                   remote = read('remote/')
                   assert 'id="login-form"' in remote
                   assert re.search(r'href="\./remote\.css(\?v=[a-f0-9]+)?"', remote) and re.search(r'src="\./remote\.js(\?v=[a-f0-9]+)?"', remote)
-                  api = 'https://bdlminer-stats.bdlminer-bot.workers.dev'
+                  api = 'https://api.bdl-pool.com:36018'
                   assert 'name="bdl-remote-api" content="' + api + '"' in remote
                   assert 'connect-src ' + api in remote and 'name="referrer" content="no-referrer"' in remote
                   private_build = json.loads(read('remote/build.json'))
